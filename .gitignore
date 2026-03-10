@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+logs/
+*.log
+vector_db/*.bin
+vector_db/*.npy
+# RAG generated files
+data/raw_text/
+data/processed/
+vector_db/

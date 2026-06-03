@@ -3,7 +3,9 @@ import streamlit as st
 
 @st.cache_resource
 def load_model():
-    return SentenceTransformer("BAAI/bge-m3")
+    return SentenceTransformer(
+        "sentence-transformers/all-MiniLM-L6-v2"
+    )
 
 model = load_model()
 

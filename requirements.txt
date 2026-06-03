@@ -9,3 +9,4 @@ python-pptx
 openpyxl
 Pillow
 reportlab
+torchvision

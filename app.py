@@ -241,11 +241,10 @@ with st.sidebar:
 
         st.divider()
         st.markdown("#### Chat Controls")
-
-        st.markdown("#### Document Management")
+        st.markdown("##### Document Management")
 
         selected_doc = st.selectbox(
-            "Select document to delete",
+            "🗂️ Select document",
             options=documents,
             key="selected_doc_delete"
         )
@@ -288,35 +287,8 @@ with st.sidebar:
         st.info("No documents stored yet.")
 
 
-st.markdown("""
-<div style="display:flex;align-items:center;gap:18px;margin-top:0;margin-bottom:18px;">
-
-<div style="
-width:58px;
-height:58px;
-background:#2563eb;
-clip-path:polygon(25% 6%,75% 6%,100% 50%,75% 94%,25% 94%,0% 50%);
-display:flex;
-align-items:center;
-justify-content:center;
-color:white;
-font-weight:800;
-font-size:22px;">
-EF
-</div>
-
-<div>
-<div style="font-size:42px;font-weight:800;color:white;line-height:1;">
-ExamForge AI
-</div>
-
-<div style="font-size:18px;color:#cbd5e1;margin-top:6px;">
-SPPU AI Exam Assistant
-</div>
-</div>
-
-</div>
-""", unsafe_allow_html=True)
+st.title("📚 ExamForge AI")
+st.caption("SPPU AI Exam Assistant")
 
 
 
@@ -328,6 +300,8 @@ if "processed_files" not in st.session_state:
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
+
+st.subheader("Upload Documents")
 
 uploaded_files = st.file_uploader(
     "Upload Documents",
@@ -460,11 +434,11 @@ if st.session_state.chat_history:
             st.markdown(
                 f"""
                 <div style="
-                    font-size:24px;
-                    font-weight:700;
+                    font-size:34px;
+                    font-weight:800;
                     color:white;
-                    margin-bottom:12px;
-                    line-height:1.5;
+                    margin-bottom:18px;
+                    line-height:1.4;
                 ">
                     {chat['question']}
                 </div>
@@ -484,13 +458,19 @@ if st.session_state.chat_history:
                 cleaned_answer
             )
 
+            cleaned_answer = re.sub(
+                r"(?m)^([A-Za-z ]+):$",
+                r"### \1",
+                cleaned_answer
+            )
+
             cleaned_answer = cleaned_answer.replace("**", "")
 
             st.markdown(
                 f"""
                 <style>
                 .answer-container h1 {{
-                    font-size: 34px;
+                    font-size: 30px;
                     font-weight: 800;
                     margin-top: 20px;
                     margin-bottom: 14px;
@@ -498,7 +478,7 @@ if st.session_state.chat_history:
                 }}
 
                 .answer-container h2 {{
-                    font-size: 28px;
+                    font-size: 24px;
                     font-weight: 700;
                     margin-top: 18px;
                     margin-bottom: 12px;
@@ -506,10 +486,16 @@ if st.session_state.chat_history:
                 }}
 
                 .answer-container h3 {{
-                    font-size: 22px;
+                    font-size: 20px;
                     font-weight: 700;
                     margin-top: 16px;
                     margin-bottom: 10px;
+                    color: white;
+                }}
+
+                .answer-container strong {{
+                    font-size: 19px;
+                    font-weight: 700;
                     color: white;
                 }}
 

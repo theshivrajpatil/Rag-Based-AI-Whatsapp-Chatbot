@@ -18,7 +18,7 @@
 .main .block-container {
     max-width: 1100px !important;
     margin: 0 auto;
-    padding-top: 0 !important;
+    padding-top: 1.5rem !important;
     padding-left: 2rem;
     padding-right: 2rem;
     padding-bottom: 160px !important;
@@ -31,6 +31,7 @@ h1 {
     font-weight: 700 !important;
     letter-spacing: -0.02em;
     margin-top: 0 !important;
+    padding-top: 8px !important;
     line-height: 1.2 !important;
 }
 
@@ -212,7 +213,9 @@ div[data-testid="column"] .stDownloadButton {
 
 /*[data-testid="stFileUploaderDropzone"] added styles*/
 [data-testid="stFileUploaderDropzone"] {
-    border: none !important;
+    border: 2px dashed #374151 !important;
+    border-radius: 14px !important;
+    padding: 20px !important;
     background: transparent !important;
 }
 

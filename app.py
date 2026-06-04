@@ -27,6 +27,7 @@ from rag.retriever import (
     collection
 )
 
+
 from rag.generator import generate_answer
 
 css_file = Path("assets/styles.css")
@@ -192,6 +193,27 @@ def get_documents():
 
         return []
 
+def delete_document(file_name):
+
+    try:
+
+        results = collection.get(
+            where={"file_name": file_name}
+        )
+
+        ids = results.get("ids", [])
+
+        if ids:
+            collection.delete(ids=ids)
+
+        return True
+
+    except Exception as e:
+
+        st.error(f"Failed to delete {file_name}: {e}")
+
+        return False
+
 
 with st.sidebar:
 
@@ -219,6 +241,27 @@ with st.sidebar:
 
         st.divider()
         st.markdown("#### Chat Controls")
+
+        st.markdown("#### Document Management")
+
+        selected_doc = st.selectbox(
+            "Select document to delete",
+            options=documents,
+            key="selected_doc_delete"
+        )
+
+        if st.button(
+            "🗑️ Delete Selected Document",
+            use_container_width=True
+        ):
+
+            if delete_document(selected_doc):
+
+                st.success(f"Deleted {selected_doc}")
+
+                st.session_state.documents_processed = False
+
+                st.rerun()
 
         if st.button("New Chat"):
             st.session_state.chat_history = []
@@ -292,7 +335,7 @@ uploaded_files = st.file_uploader(
     accept_multiple_files=True
 )
 
-if uploaded_files and not st.session_state.documents_processed:
+if uploaded_files:
 
     total_chunks = 0
 
@@ -413,7 +456,21 @@ if st.session_state.chat_history:
     for idx, chat in enumerate(st.session_state.chat_history):
 
         with st.chat_message("user"):
-            st.markdown(chat["question"])
+
+            st.markdown(
+                f"""
+                <div style="
+                    font-size:24px;
+                    font-weight:700;
+                    color:white;
+                    margin-bottom:12px;
+                    line-height:1.5;
+                ">
+                    {chat['question']}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
         with st.chat_message("assistant"):
 
@@ -422,14 +479,54 @@ if st.session_state.chat_history:
             cleaned_answer = cleaned_answer.replace("```text", "```")
 
             cleaned_answer = re.sub(
-                r"\*\*(Definition|Explanation|Important Points|Conclusion|Advantages|Features|Process State Transition Diagram):\*\*",
+                r"\*\*(Definition|Explanation|Characteristics|Applications|Advantages|Disadvantages|Features|Important Points|Conclusion|Process State Transition Diagram|Detailed Components|Types|Working|Architecture):\*\*",
                 r"## \1",
                 cleaned_answer
             )
 
             cleaned_answer = cleaned_answer.replace("**", "")
 
-            st.markdown(cleaned_answer)
+            st.markdown(
+                f"""
+                <style>
+                .answer-container h1 {{
+                    font-size: 34px;
+                    font-weight: 800;
+                    margin-top: 20px;
+                    margin-bottom: 14px;
+                    color: white;
+                }}
+
+                .answer-container h2 {{
+                    font-size: 28px;
+                    font-weight: 700;
+                    margin-top: 18px;
+                    margin-bottom: 12px;
+                    color: white;
+                }}
+
+                .answer-container h3 {{
+                    font-size: 22px;
+                    font-weight: 700;
+                    margin-top: 16px;
+                    margin-bottom: 10px;
+                    color: white;
+                }}
+
+                .answer-container p,
+                .answer-container li {{
+                    font-size: 17px;
+                    line-height: 1.8;
+                    color: #f3f4f6;
+                }}
+                </style>
+
+                <div class="answer-container">
+                {cleaned_answer}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
             pdf_buffer = create_pdf(chat["answer"])
 

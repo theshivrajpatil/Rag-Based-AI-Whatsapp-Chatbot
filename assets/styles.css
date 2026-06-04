@@ -249,27 +249,108 @@ div[data-testid="column"] .stMarkdown {
 @media (max-width: 768px) {
 
     .main .block-container {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-        padding-bottom: 120px !important;
+        max-width: 100% !important;
+        padding-top: 0.5rem !important;
+        padding-left: 0.8rem !important;
+        padding-right: 0.8rem !important;
+        padding-bottom: 110px !important;
+    }
+
+    section[data-testid="stSidebar"] {
+        min-width: 260px !important;
     }
 
     [data-testid="stChatInput"] {
-        left: 10px !important;
-        right: 10px !important;
+        left: 8px !important;
+        right: 8px !important;
         width: auto !important;
         transform: none !important;
+        bottom: 10px !important;
+    }
+
+    [data-testid="stChatInput"] > div {
+        border-radius: 22px !important;
     }
 
     [data-testid="stFileUploader"] {
         width: 100% !important;
+        padding: 6px !important;
+    }
+
+    [data-testid="stFileUploader"] section {
+        min-height: 90px !important;
     }
 
     h1 {
-        font-size: 1.8rem !important;
+        font-size: 1.9rem !important;
+        line-height: 1.2 !important;
     }
 
-    h2, h3 {
-        font-size: 1rem !important;
+    h2 {
+        font-size: 1.4rem !important;
     }
+
+    h3 {
+        font-size: 1.15rem !important;
+    }
+
+    p,
+    li,
+    span {
+        font-size: 15px !important;
+    }
+
+    .stButton button {
+        height: 42px !important;
+        font-size: 14px !important;
+    }
+}
+
+/* CHATGPT STYLE ANSWERS */
+
+[data-testid="stChatMessage"] h1 {
+    font-size: 2rem !important;
+    font-weight: 700 !important;
+    margin-top: 18px !important;
+    margin-bottom: 12px !important;
+    line-height: 1.3 !important;
+}
+
+[data-testid="stChatMessage"] h2 {
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    margin-top: 16px !important;
+    margin-bottom: 8px !important;
+    line-height: 1.4 !important;
+}
+
+[data-testid="stChatMessage"] h3 {
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    margin-top: 14px !important;
+    margin-bottom: 6px !important;
+    line-height: 1.4 !important;
+}
+
+[data-testid="stChatMessage"] p,
+[data-testid="stChatMessage"] li {
+    font-size: 1rem !important;
+    line-height: 1.8 !important;
+    margin-bottom: 8px !important;
+    color: #e5e7eb !important;
+}
+
+[data-testid="stChatMessage"] strong {
+    font-weight: 700 !important;
+    color: #ffffff !important;
+}
+
+[data-testid="stChatMessage"] ul,
+[data-testid="stChatMessage"] ol {
+    padding-left: 22px !important;
+}
+
+/* User question styling */
+[data-testid="stChatMessage"]:has(div[style*="font-size:24px"]) {
+    margin-bottom: 6px !important;
 }

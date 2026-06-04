@@ -27,7 +27,6 @@ from rag.retriever import (
     collection
 )
 
-
 from rag.generator import generate_answer
 
 css_file = Path("assets/styles.css")
@@ -197,21 +196,24 @@ def delete_document(file_name):
 
     try:
 
-        results = collection.get(
-            where={"file_name": file_name}
-        )
+        results = collection.get()
 
-        ids = results.get("ids", [])
+        ids_to_delete = []
 
-        if ids:
-            collection.delete(ids=ids)
+        for idx, metadata in enumerate(results.get("metadatas", [])):
 
-        return True
+            if metadata and metadata.get("file_name") == file_name:
+                ids_to_delete.append(results["ids"][idx])
+
+        if ids_to_delete:
+            collection.delete(ids=ids_to_delete)
+            return True
+
+        return False
 
     except Exception as e:
 
-        st.error(f"Failed to delete {file_name}: {e}")
-
+        st.error(f"Delete failed: {e}")
         return False
 
 
@@ -230,6 +232,7 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
+
     st.markdown("### Uploaded Documents")
 
     documents = get_documents()
@@ -241,26 +244,26 @@ with st.sidebar:
 
         st.divider()
         st.markdown("#### Chat Controls")
-        st.markdown("##### Document Management")
 
         selected_doc = st.selectbox(
-            "🗂️ Select document",
+            "Select document",
             options=documents,
             key="selected_doc_delete"
         )
 
-        if st.button(
-            "🗑️ Delete Selected Document",
-            use_container_width=True
-        ):
+        if st.button("Delete Selected Document"):
 
             if delete_document(selected_doc):
 
-                st.success(f"Deleted {selected_doc}")
+                st.success(f"Deleted: {selected_doc}")
 
                 st.session_state.documents_processed = False
 
                 st.rerun()
+
+            else:
+
+                st.error("Unable to delete document")
 
         if st.button("New Chat"):
             st.session_state.chat_history = []
@@ -287,8 +290,35 @@ with st.sidebar:
         st.info("No documents stored yet.")
 
 
-st.title("📚 ExamForge AI")
-st.caption("SPPU AI Exam Assistant")
+st.markdown("""
+<div style="display:flex;align-items:center;gap:18px;margin-top:0;margin-bottom:18px;">
+
+<div style="
+width:58px;
+height:58px;
+background:#2563eb;
+clip-path:polygon(25% 6%,75% 6%,100% 50%,75% 94%,25% 94%,0% 50%);
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-weight:800;
+font-size:22px;">
+EF
+</div>
+
+<div>
+<div style="font-size:42px;font-weight:800;color:white;line-height:1;">
+ExamForge AI
+</div>
+
+<div style="font-size:18px;color:#cbd5e1;margin-top:6px;">
+SPPU AI Exam Assistant
+</div>
+</div>
+
+</div>
+""", unsafe_allow_html=True)
 
 
 
@@ -301,15 +331,13 @@ if "processed_files" not in st.session_state:
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
-st.subheader("Upload Documents")
-
 uploaded_files = st.file_uploader(
     "Upload Documents",
     type=["pdf", "txt", "md", "csv", "json", "docx", "pptx", "xlsx", "png", "jpg", "jpeg", "webp"],
     accept_multiple_files=True
 )
 
-if uploaded_files:
+if uploaded_files and not st.session_state.documents_processed:
 
     total_chunks = 0
 
@@ -430,16 +458,9 @@ if st.session_state.chat_history:
     for idx, chat in enumerate(st.session_state.chat_history):
 
         with st.chat_message("user"):
-
             st.markdown(
                 f"""
-                <div style="
-                    font-size:34px;
-                    font-weight:800;
-                    color:white;
-                    margin-bottom:18px;
-                    line-height:1.4;
-                ">
+                <div style='font-size:22px;font-weight:700;line-height:1.5;margin-bottom:10px;color:white;'>
                     {chat['question']}
                 </div>
                 """,
@@ -453,8 +474,8 @@ if st.session_state.chat_history:
             cleaned_answer = cleaned_answer.replace("```text", "```")
 
             cleaned_answer = re.sub(
-                r"\*\*(Definition|Explanation|Characteristics|Applications|Advantages|Disadvantages|Features|Important Points|Conclusion|Process State Transition Diagram|Detailed Components|Types|Working|Architecture):\*\*",
-                r"## \1",
+                r"\*\*(Definition|Explanation|Characteristics|Applications|Advantages|Disadvantages|Features|Important Points|Conclusion|Process State Transition Diagram):\*\*",
+                r"### \1",
                 cleaned_answer
             )
 
@@ -463,56 +484,40 @@ if st.session_state.chat_history:
                 r"### \1",
                 cleaned_answer
             )
-
             cleaned_answer = cleaned_answer.replace("**", "")
 
             st.markdown(
-                f"""
+                """
                 <style>
-                .answer-container h1 {{
-                    font-size: 30px;
-                    font-weight: 800;
-                    margin-top: 20px;
-                    margin-bottom: 14px;
-                    color: white;
-                }}
+                .stChatMessage h1 {
+                    font-size:24px !important;
+                    font-weight:700 !important;
+                    margin-bottom:12px !important;
+                }
 
-                .answer-container h2 {{
-                    font-size: 24px;
-                    font-weight: 700;
-                    margin-top: 18px;
-                    margin-bottom: 12px;
-                    color: white;
-                }}
+                .stChatMessage h2 {
+                    font-size:20px !important;
+                    font-weight:700 !important;
+                    margin-bottom:10px !important;
+                }
 
-                .answer-container h3 {{
-                    font-size: 20px;
-                    font-weight: 700;
-                    margin-top: 16px;
-                    margin-bottom: 10px;
-                    color: white;
-                }}
+                .stChatMessage h3 {
+                    font-size:17px !important;
+                    font-weight:700 !important;
+                    margin-bottom:8px !important;
+                }
 
-                .answer-container strong {{
-                    font-size: 19px;
-                    font-weight: 700;
-                    color: white;
-                }}
-
-                .answer-container p,
-                .answer-container li {{
-                    font-size: 17px;
-                    line-height: 1.8;
-                    color: #f3f4f6;
-                }}
+                .stChatMessage p,
+                .stChatMessage li {
+                    font-size:16px !important;
+                    line-height:1.8 !important;
+                }
                 </style>
-
-                <div class="answer-container">
-                {cleaned_answer}
-                </div>
                 """,
                 unsafe_allow_html=True
             )
+
+            st.markdown(cleaned_answer)
 
             pdf_buffer = create_pdf(chat["answer"])
 

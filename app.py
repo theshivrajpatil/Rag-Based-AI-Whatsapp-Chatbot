@@ -3,6 +3,13 @@ import hashlib
 from pathlib import Path
 from io import BytesIO
 import re
+
+st.set_page_config(
+    page_title="ExamForge AI",
+    page_icon="📚",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, Preformatted
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
@@ -21,6 +28,14 @@ from rag.retriever import (
 )
 
 from rag.generator import generate_answer
+
+css_file = Path("assets/styles.css")
+
+if css_file.exists():
+    st.markdown(
+        f"<style>{css_file.read_text()}</style>",
+        unsafe_allow_html=True
+    )
 
 def create_pdf(text):
 
@@ -229,32 +244,38 @@ with st.sidebar:
     else:
         st.info("No documents stored yet.")
 
-col1, col2 = st.columns([1, 10])
 
-with col1:
-    st.markdown(
-        """
-        <div style='width:60px;height:60px;background:#2563eb;
-        clip-path:polygon(25% 6%,75% 6%,100% 50%,75% 94%,25% 94%,0% 50%);
-        display:flex;align-items:center;justify-content:center;
-        color:white;font-weight:800;font-size:22px;margin-top:10px;'>EF</div>
-        """,
-        unsafe_allow_html=True
-    )
+st.markdown("""
+<div style="display:flex;align-items:center;gap:18px;margin-top:0;margin-bottom:18px;">
 
-with col2:
-    st.markdown("# ExamForge AI")
-    st.markdown("### SPPU AI Exam Assistant")
+<div style="
+width:58px;
+height:58px;
+background:#2563eb;
+clip-path:polygon(25% 6%,75% 6%,100% 50%,75% 94%,25% 94%,0% 50%);
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-weight:800;
+font-size:22px;">
+EF
+</div>
+
+<div>
+<div style="font-size:42px;font-weight:800;color:white;line-height:1;">
+ExamForge AI
+</div>
+
+<div style="font-size:18px;color:#cbd5e1;margin-top:6px;">
+SPPU AI Exam Assistant
+</div>
+</div>
+
+</div>
+""", unsafe_allow_html=True)
 
 
-
-css_file = Path("assets/styles.css")
-
-if css_file.exists():
-    st.markdown(
-        f"<style>{css_file.read_text()}</style>",
-        unsafe_allow_html=True
-    )
 
 if "documents_processed" not in st.session_state:
     st.session_state.documents_processed = False

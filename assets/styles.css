@@ -16,18 +16,27 @@
 
 /* Main layout */
 .main .block-container {
-    max-width: 1100px;
+    max-width: 1100px !important;
     margin: 0 auto;
-    padding-top: 2rem;
-    padding-bottom: 160px;
+    padding-top: 0 !important;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-bottom: 160px !important;
 }
 
 /* Main heading */
 h1 {
-    color: #b91212 !important;
+    color: #ffffff !important;
     font-size: 2.3rem !important;
     font-weight: 700 !important;
     letter-spacing: -0.02em;
+    margin-top: 0 !important;
+    line-height: 1.2 !important;
+}
+
+h1, h2, h3 {
+    overflow: visible !important;
+    white-space: normal !important;
 }
 
 h2,
@@ -50,52 +59,29 @@ section[data-testid="stSidebar"] {
 }
 
 /* ChatGPT style input */
-.stChatInput {
+[data-testid="stChatInput"] {
     position: fixed;
     bottom: 20px;
-    left: calc(21rem + 40px);
-    right: 40px;
-    max-width: calc(100vw - 21rem - 80px);
+    width: min(900px, calc(100vw - 380px));
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 999;
 }
 
-.stChatInput,
-.stChatInput > div,
-.stChatInput > div > div {
-    width: 100% !important;
-}
-
-.stChatInput > div {
-    background: #262730;
-    border: 1px solid #3a3f4b;
-    border-radius: 30px;
-    padding: 10px;
-}
-
-.stChatInput textarea {
-    border: none !important;
+[data-testid="stChatInput"] > div {
+    border-radius: 28px !important;
+    border: 1px solid #3a3f4b !important;
     background: #262730 !important;
+    padding: 6px !important;
+}
+
+[data-testid="stChatInput"] textarea {
     color: #ffffff !important;
-    min-height: 24px !important;
-    padding: 10px 14px !important;
 }
 
-.stChatInput textarea:focus {
-    box-shadow: none !important;
-}
-
-.stChatInput button {
-    width: 34px !important;
-    height: 34px !important;
-    min-width: 34px !important;
-    border-radius: 50% !important;
+[data-testid="stChatInput"] button {
     background: #2563eb !important;
-    color: white !important;
-    border: none !important;
-}
-
-.stChatInput button:hover {
-    background: #1d4ed8 !important;
+    border-radius: 50% !important;
 }
 
 /* Chat cards */
@@ -148,12 +134,25 @@ section[data-testid="stSidebar"] {
     background: rgba(17, 24, 39, 0.6);
 }
 
+div[role="radiogroup"] label {
+    color: #ffffff !important;
+}
+
 /* File uploader */
 [data-testid="stFileUploader"] {
-    border: 1px dashed #475569;
-    border-radius: 14px;
-    padding: 16px;
-    background: #262730;
+    width: 100%;
+    border: 1px solid #374151;
+    border-radius: 18px;
+    padding: 8px;
+    background: #1f2937;
+    margin-bottom: 20px;
+}
+
+[data-testid="stFileUploader"] section {
+    min-height: 120px !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 12px !important;
 }
 
 /* Welcome cards */
@@ -174,7 +173,7 @@ hr {
 }
 
 .main .block-container {
-    padding-bottom: 190px;
+    padding-bottom: 180px;
 }
 
 /* PDF and action buttons row */
@@ -204,4 +203,73 @@ div[data-testid="column"] .stDownloadButton {
 .small,
 .caption {
     color: #e5e7eb !important;
+}
+
+/* Prevent uploader and content shifting */
+[data-testid="stFileUploaderDropzone"] {
+    width: 100% !important;
+}
+
+/*[data-testid="stFileUploaderDropzone"] added styles*/
+[data-testid="stFileUploaderDropzone"] {
+    border: none !important;
+    background: transparent !important;
+}
+
+[data-testid="stVerticalBlock"] {
+    overflow: visible !important;
+}
+
+[data-testid="stChatMessage"] {
+    max-width: 100%;
+}
+
+/* Fix top title alignment */
+div[data-testid="column"] {
+    overflow: visible !important;
+}
+
+div[data-testid="column"] .stMarkdown {
+    overflow: visible !important;
+}
+
+/* Prevent heading clipping */
+.element-container {
+    overflow: visible !important;
+}
+
+/* Cleaner radio section */
+[role="radiogroup"] {
+    background: transparent !important;
+    border: 1px solid #2f3542 !important;
+}
+
+/* mobile adjustments */
+
+@media (max-width: 768px) {
+
+    .main .block-container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        padding-bottom: 120px !important;
+    }
+
+    [data-testid="stChatInput"] {
+        left: 10px !important;
+        right: 10px !important;
+        width: auto !important;
+        transform: none !important;
+    }
+
+    [data-testid="stFileUploader"] {
+        width: 100% !important;
+    }
+
+    h1 {
+        font-size: 1.8rem !important;
+    }
+
+    h2, h3 {
+        font-size: 1rem !important;
+    }
 }

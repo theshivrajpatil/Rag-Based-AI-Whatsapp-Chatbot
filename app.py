@@ -3,8 +3,9 @@ import hashlib
 from pathlib import Path
 from io import BytesIO
 import re
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, Preformatted
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
 
 from rag.chunker import chunk_text
 
@@ -35,38 +36,117 @@ def create_pdf(text):
 
     styles = getSampleStyleSheet()
 
-    title_style = styles["Heading1"]
-    body_style = styles["BodyText"]
+    title_style = ParagraphStyle(
+        "Title",
+        parent=styles["Heading1"],
+        fontSize=20,
+        leading=24,
+        alignment=1,
+        textColor=colors.darkblue,
+        spaceAfter=20
+    )
+
+    heading_style = ParagraphStyle(
+        "Heading",
+        parent=styles["Heading2"],
+        fontSize=14,
+        leading=18,
+        textColor=colors.darkblue,
+        spaceBefore=10,
+        spaceAfter=8
+    )
+
+    body_style = ParagraphStyle(
+        "Body",
+        parent=styles["BodyText"],
+        fontSize=11,
+        leading=16,
+        spaceAfter=6
+    )
 
     content = [
-        Paragraph("SPPU AI Exam Assistant", title_style),
+        Paragraph("SPPU AI Exam Assistant - Answer Sheet", title_style),
         Spacer(1, 12)
     ]
 
-    text = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
+    parts = re.split(r"(```(?:mermaid)?[\s\S]*?```)", text)
 
-    lines = text.split("\n")
+    for part in parts:
 
-    for line in lines:
+        part = part.strip()
 
-        line = line.strip()
-
-        if not line:
+        if not part:
             continue
 
-        line = (
-            line.replace("&", "&amp;")
-            .replace("<", "&lt;")
-            .replace(">", "&gt;")
-        )
+        if part.startswith("```"):
 
-        content.append(
-            Paragraph(line, body_style)
-        )
+            diagram_text = part.replace("```mermaid", "")
+            diagram_text = diagram_text.replace("```", "")
+            diagram_text = diagram_text.strip()
 
-        content.append(
-            Spacer(1, 4)
-        )
+            content.append(
+                Paragraph("Diagram / Flowchart", heading_style)
+            )
+
+            content.append(
+                Preformatted(diagram_text, body_style)
+            )
+
+            content.append(
+                Spacer(1, 8)
+            )
+
+        else:
+
+            lines = part.split("\n")
+
+            for line in lines:
+
+                line = line.strip()
+
+                if not line:
+                    continue
+
+                line = (
+                    line.replace("&", "&amp;")
+                    .replace("<", "&lt;")
+                    .replace(">", "&gt;")
+                )
+                line = line.replace("**", "")
+                line = line.replace("__", "")
+
+                if line.startswith("#"):
+
+                    content.append(
+                        Paragraph(
+                            line.lstrip("#").strip(),
+                            heading_style
+                        )
+                    )
+
+                elif ":" in line and len(line) < 60:
+
+                    content.append(
+                        Paragraph(
+                            line.strip(),
+                            heading_style
+                        )
+                    )
+
+                elif line.startswith("* "):
+
+                    content.append(
+                        Paragraph(
+                            f"• {line[2:]}",
+                            body_style
+                        )
+                    )
+
+                else:
+
+                    content.append(
+                        Paragraph(line, body_style)
+                    )
 
     doc.build(content)
 
@@ -315,7 +395,20 @@ if st.session_state.chat_history:
             st.markdown(chat["question"])
 
         with st.chat_message("assistant"):
-            st.markdown(chat["answer"])
+
+            cleaned_answer = chat["answer"]
+            cleaned_answer = cleaned_answer.replace("```ascii", "```")
+            cleaned_answer = cleaned_answer.replace("```text", "```")
+
+            cleaned_answer = re.sub(
+                r"\*\*(Definition|Explanation|Important Points|Conclusion|Advantages|Features|Process State Transition Diagram):\*\*",
+                r"## \1",
+                cleaned_answer
+            )
+
+            cleaned_answer = cleaned_answer.replace("**", "")
+
+            st.markdown(cleaned_answer)
 
             pdf_buffer = create_pdf(chat["answer"])
 

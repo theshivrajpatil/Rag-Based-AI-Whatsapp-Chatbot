@@ -44,6 +44,25 @@ Rules:
 - Explanation
 - Important Points
 - Around 200 words
+- If a flowchart, architecture, state diagram, lifecycle diagram, ER diagram, process diagram, or system diagram is required, generate a clean ASCII diagram using boxes, arrows, and labels.
+- Do NOT generate Mermaid code.
+- The diagram must be directly readable in PDF export.
+- Use box-drawing style formatting.
+
+Example:
++------+
+| New  |
++------+
+    |
+    v
++--------+
+| Ready  |
++--------+
+    |
+    v
++---------+
+| Running |
++---------+
 """
 
     elif answer_type == "10 Marks":
@@ -63,6 +82,26 @@ Rules:
 - Advantages
 - Disadvantages
 - Conclusion
+- If a flowchart, architecture, state diagram, lifecycle diagram, ER diagram, process diagram, or system diagram is required, generate a clean ASCII diagram using boxes, arrows, and labels.
+- Do NOT generate Mermaid code.
+- The diagram must be directly readable in PDF export.
+- Make diagrams detailed and exam-ready.
+- Use box-drawing style formatting.
+
+Example:
++------+
+| New  |
++------+
+    |
+    v
++--------+
+| Ready  |
++--------+
+    |
+    v
++---------+
+| Running |
++---------+
 """
 
     else:

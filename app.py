@@ -389,7 +389,7 @@ if st.session_state.chat_history:
 
     st.subheader("Conversation")
 
-    for chat in st.session_state.chat_history:
+    for idx, chat in enumerate(st.session_state.chat_history):
 
         with st.chat_message("user"):
             st.markdown(chat["question"])
@@ -415,10 +415,12 @@ if st.session_state.chat_history:
             st.download_button(
                 "📄 Export PDF",
                 pdf_buffer,
-                file_name="sppu_ai_answer.pdf",
+                file_name=f"sppu_ai_answer_{idx + 1}.pdf",
                 mime="application/pdf",
-                key=f"pdf_{hash(chat['question'])}"
+                key=f"pdf_export_{idx}"
             )
 
             with st.expander("View Sources"):
-                st.caption("Answer generated from uploaded knowledge base documents.")
+                st.caption(
+                    "Answer generated from uploaded knowledge base documents."
+                )
